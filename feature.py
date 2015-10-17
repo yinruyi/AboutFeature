@@ -13,6 +13,8 @@ import jieba
 from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+import math
+
 
 class pretreatment():
     """预处理"""
@@ -29,6 +31,7 @@ class pretreatment():
         return dataset
 
     def cutWords(self, dataset):
+        #分词
         result = []
         for i in xrange(len(dataset)):
             temp = " ".join(jieba.cut(dataset[i]))
@@ -93,9 +96,22 @@ class idf():
     def __init__(self):
         pass
     def idf(self, dataset, num):
-        pass
-
-        
+        dataset = self.cutWords(dataset)
+        data_length = len(dataset)
+        print data_length
+        temp,word= [],[]
+        for i in dataset:
+            temp.extend(list(set(i.split())))
+        dataset = self.count(temp)
+        for k,v in dataset.items():
+            word.append((k,v))
+        word = self.filter_tuple(word)
+        temp = []
+        for i in word:
+            temp.append((i[0],math.log(1.0*data_length/i[1])))
+        word = temp
+        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:num]
+        return word     
 
 class tfidf():
     def __init__():
@@ -141,5 +157,5 @@ if __name__=='__main__':
 #df
     #word = DataAnalysis().df(data,20)
 #idf
-    word = DataAnalysis().idf(data,20)
+    #word = DataAnalysis().idf(data,20)
     print word
