@@ -10,7 +10,6 @@ import sys
 sys.path.append("../")
 import jieba
 #jieba.load_userdict("userdict.txt")
-import jieba.posseg as pseg
 from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -36,6 +35,68 @@ class pretreatment():
             result.append(temp)
         return result
 
+    def count(self, dataset):
+        #计数
+        count = {}
+        for i in dataset:
+            if i in count:
+                count[i] += 1
+            else:
+                count[i] =1
+        return count
+
+    def filter_tuple(self, dataset):
+        #对元组进行过滤
+        filter_words = [u",",u".",u"，",u"。",u")",u"(",u"（",u"）"]
+        result = []
+        for i in dataset:
+            if i[0] not in filter_words:
+                result.append(i)
+        return result
+
+
+class tf():
+    def __init__():
+        pass
+    def tf(self, dataset, num):
+        dataset = self.cutWords(dataset)
+        temp,word= [],[]
+        for i in dataset:
+            temp.extend(i.split())
+        dataset = self.count(temp)
+        for k,v in dataset.items():
+            word.append((k,v))
+        word = self.filter_tuple(word)
+        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:num]
+        word = [i[0] for i in word]
+        #print word
+        return word
+
+class df():
+    def __init__():
+        pass
+    def df(self, dataset, num):
+        dataset = self.cutWords(dataset)
+        temp,word= [],[]
+        for i in dataset:
+            temp.extend(list(set(i.split())))
+        dataset = self.count(temp)
+        for k,v in dataset.items():
+            word.append((k,v))
+        word = self.filter_tuple(word)
+        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:num]
+        word = [i[0] for i in word]
+        #print word
+        return word
+
+class idf():
+    def __init__(self):
+        pass
+    def idf(self, dataset, num):
+        pass
+
+        
+
 class tfidf():
     def __init__():
         pass
@@ -55,7 +116,15 @@ class tfidf():
         return word
 
 
-class Methods(tfidf,pretreatment):
+class mi():
+    def __init__():
+        pass
+    def mi(self, dataset, num):
+        pass
+
+
+        
+class Methods(tfidf, tf, df, mi, idf):
     pass
 
 class DataAnalysis(pretreatment, Methods):
@@ -65,6 +134,12 @@ class DataAnalysis(pretreatment, Methods):
 
 if __name__=='__main__':
     data = DataAnalysis().read_txt('E:\\dev\\AboutFeature\\data\\data1.txt')
-    word = DataAnalysis().tfidf(data,20)
+#tfidf
+    #word = DataAnalysis().tfidf(data,20)
+#tf
+    #word = DataAnalysis().tf(data,20)
+#df
+    #word = DataAnalysis().df(data,20)
+#idf
+    word = DataAnalysis().idf(data,20)
     print word
-
