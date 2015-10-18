@@ -14,7 +14,7 @@ from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 import math
-
+from gensim import corpora, models, similarities
 
 class pretreatment():
     """预处理"""
@@ -199,13 +199,42 @@ class chi_square():
             chi_square_temp = 1.0*(v[0]*v[3]-v[1]*v[2])**2/((v[0]+v[1])*(v[2]+v[3]))
             word.append((k,chi_square_temp,v[0]))
         word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:20]
-        print word
+        #print word
         word = [i[0] for i in word]
         return word
 
-
+class lsi():
+    def __init__():
+        pass
+    def lsi(self, dataset):
+        documents = ["Shipment of gold damaged in a fire",
+                    "Delivery of silver arrived in a silver truck",
+                    "Shipment of gold arrived in a truck"]
+        texts = [[word for word in document.lower().split()] for document in documents]
+        print texts
+        dictionary = corpora.Dictionary(texts)
+        print dictionary
+        print dictionary.token2id
+        corpus = [dictionary.doc2bow(text) for text in texts]
+        print corpus
+        tfidf = models.TfidfModel(corpus)
+        print tfidf
+        corpus_tfidf = tfidf[corpus]
+        print corpus_tfidf
+        print tfidf.dfs
+        print tfidf.idfs
+        lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=2)
+        print lsi.print_topics(2)
+        corpus_lsi = lsi[corpus_tfidf]
+        for doc in corpus_lsi:
+            print doc
+        lda = models.LdaModel(copurs_tfidf, id2word=dictionary, num_topics=2)
+        print  lda.print_topics(2)
+        index = similarities.MatrixSimilarity(lsi[corpus])
+        print index
+        
                       
-class Methods(tfidf, tf, df, pmi, idf, chi_square):
+class Methods(tfidf, tf, df, pmi, idf, chi_square, lsi):
     pass
 
 class DataAnalysis(pretreatment, Methods):
@@ -226,5 +255,7 @@ if __name__=='__main__':
 #pmi
     #word = DataAnalysis().pmi(data,threshold=10)
 #chi_square
-    word = DataAnalysis().chi_square(data,threshold=10)
-    print word
+    #word = DataAnalysis().chi_square(data,threshold=10)
+    #print word
+#lsi/lsa
+    word = DataAnalysis().lsi(data)
