@@ -131,16 +131,81 @@ class tfidf():
         word = [i[0] for i in word]
         return word
 
-
-class mi():
+class pmi():
     def __init__():
         pass
-    def mi(self, dataset, num):
+    def pmi(self, dataset, threshold):
+        dataset = self.cutWords(dataset)
+        single,double= [],[]
+        for i in xrange(len(dataset)):
+            temp = dataset[i].split()
+            #print temp
+            for j in xrange(len(temp)):
+                single.append(temp[j])
+            if len(temp) > 1:
+                for j in xrange(len(temp)-1):
+                    double.append((temp[j],temp[j+1]))
+        #print len(single),len(double)
+        len_single, len_double = len(single) ,len(double)
+        single = self.count(single)
+        double = self.count(double)
+        word = []#结果[((a,b),pmi)]
+        for k,v in double.items():
+            pxy = 1.0*v/len_double
+            px,py = 1.0*single[k[0]]/len_single,1.0*single[k[1]]/len_single
+            pmi = math.log(pxy/(px*py))
+            if pmi >= threshold:
+                word.append((k,pmi))
+        #print word
+        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)
+        #print word
+        word = [i[0] for i in word]
+        result = []
+        for i in word:
+            result.extend([i[0],i[1]])
+        result = list(set(result))
+        return result
+
+class chi_square():
+    def __init__():
         pass
+    def chi_square(self, dataset, threshold):
+        dataset = self.cutWords(dataset)
+        single,double= [],[]
+        for i in xrange(len(dataset)):
+            temp = dataset[i].split()
+            #print temp
+            for j in xrange(len(temp)):
+                single.append(temp[j])
+            if len(temp) > 1:
+                for j in xrange(len(temp)-1):
+                    double.append((temp[j],temp[j+1]))
+        chi_temp = {}#{(a,b):[a,b,c,d]}
+        for i in double:
+            if i not in chi_temp:
+                a,b,c,d = 0,0,0,0
+                for j in double:
+                    if i[0] == j[0] and i[1] == j[1]:
+                        a += 1
+                    elif i[0] == j[0] and i[1] != j[1]:
+                        b += 1
+                    elif i[0] != j[0] and i[1] == j[1]:
+                        c += 1
+                    elif i[0] != j[0] and i[1] != j[1]:
+                        d += 1
+                chi_temp[i] = [a,b,c,d]
+        word = []
+        for k,v in chi_temp.items():
+            chi_square_temp = 1.0*(v[0]*v[3]-v[1]*v[2])**2/((v[0]+v[1])*(v[2]+v[3]))
+            word.append((k,chi_square_temp,v[0]))
+        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:20]
+        print word
+        word = [i[0] for i in word]
+        return word
 
 
-        
-class Methods(tfidf, tf, df, mi, idf):
+                      
+class Methods(tfidf, tf, df, pmi, idf, chi_square):
     pass
 
 class DataAnalysis(pretreatment, Methods):
@@ -158,4 +223,8 @@ if __name__=='__main__':
     #word = DataAnalysis().df(data,20)
 #idf
     #word = DataAnalysis().idf(data,20)
+#pmi
+    #word = DataAnalysis().pmi(data,threshold=10)
+#chi_square
+    word = DataAnalysis().chi_square(data,threshold=10)
     print word
