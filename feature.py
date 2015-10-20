@@ -243,7 +243,7 @@ class DataAnalysis(pretreatment, Methods):
 
 
 if __name__=='__main__':
-    data = DataAnalysis().read_txt('E:\\dev\\AboutFeature\\data\\data1.txt')
+    data = DataAnalysis().read_txt('E:\\dev\\AboutFeature\\data\\ISR_lower.txt')
 #tfidf
     #word = DataAnalysis().tfidf(data,20)
 #tf
