@@ -15,6 +15,8 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 import math
 from gensim import corpora, models, similarities
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class pretreatment():
     """预处理"""
@@ -117,7 +119,10 @@ class tfidf():
     def __init__():
         pass
     def tfidf(self, dataset, num):
+        stop_words = self.read_txt("E:\\dev\\AboutFeature\\data\\Stopword-Chinese.txt")
+        print stop_words
         corpus = self.cutWords(dataset)
+        print corpus[1]
         vectorizer=CountVectorizer()#该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
         transformer=TfidfTransformer()#该类会统计每个词语的tf-idf权值
         #print vectorizer.fit_transform(corpus)
@@ -243,9 +248,9 @@ class DataAnalysis(pretreatment, Methods):
 
 
 if __name__=='__main__':
-    data = DataAnalysis().read_txt('E:\\dev\\AboutFeature\\data\\ISR_lower.txt')
+    data = DataAnalysis().read_txt('E:\\dev\\AboutFeature\\data\\ruanjian.txt')
 #tfidf
-    #word = DataAnalysis().tfidf(data,20)
+    word = DataAnalysis().tfidf(data,20)
 #tf
     #word = DataAnalysis().tf(data,20)
 #df
@@ -258,4 +263,8 @@ if __name__=='__main__':
     #word = DataAnalysis().chi_square(data,threshold=10)
     #print word
 #lsi/lsa
-    word = DataAnalysis().lsi(data)
+    #word = DataAnalysis().lsi(data)
+    #with open("result.json", "w") as f:
+        #json.dump(word, f)
+    string = "\n".join(word)
+    open("result.txt","w").write(string)
