@@ -7,9 +7,7 @@ import string
 import codecs
 import json
 import sys
-sys.path.append("../")
 import jieba
-#jieba.load_userdict("userdict.txt")
 from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -17,6 +15,8 @@ import math
 from gensim import corpora, models, similarities
 reload(sys)
 sys.setdefaultencoding('utf-8')
+abspath = os.getcwd()
+jieba.load_userdict(abspath+"//data//ruanjian_keywords.txt")
 
 class pretreatment():
     """预处理"""
@@ -58,7 +58,6 @@ class pretreatment():
             if i[0] not in filter_words:
                 result.append(i)
         return result
-
 
 class tf():
     def __init__():
@@ -122,7 +121,8 @@ class tfidf():
         stop_words = self.read_txt("E:\\dev\\AboutFeature\\data\\Stopword-Chinese.txt")
         print stop_words
         corpus = self.cutWords(dataset)
-        print corpus[1]
+        for i in corpus:
+            
         vectorizer=CountVectorizer()#该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
         transformer=TfidfTransformer()#该类会统计每个词语的tf-idf权值
         #print vectorizer.fit_transform(corpus)
@@ -266,5 +266,5 @@ if __name__=='__main__':
     #word = DataAnalysis().lsi(data)
     #with open("result.json", "w") as f:
         #json.dump(word, f)
-    string = "\n".join(word)
-    open("result.txt","w").write(string)
+    #string = "\n".join(word)
+    #open("result.txt","w").write(string)
