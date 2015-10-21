@@ -33,7 +33,7 @@ class pretreatment():
         return dataset
 
     def cutWords(self, dataset, stop_words_path="None"):
-        #分词
+        #分词/去停用词
         result = []
         if stop_words_path == "None":
             for i in xrange(len(dataset)):
@@ -136,8 +136,6 @@ class tfidf():
     def __init__():
         pass
     def tfidf(self, dataset, num):
-        #stop_words = self.read_txt(abspath+"//data//Stopword-Chinese.txt")
-        #print stop_words
         stop_words_path = abspath+"//data//Stopword-Chinese.txt"
         corpus = self.cutWords(dataset,stop_words_path)
         vectorizer=CountVectorizer()#该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
@@ -150,7 +148,7 @@ class tfidf():
         for i in xrange(len(weight[0])):
             word[i] = (word[i],sum(weight[:,i])) 
         word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:num]
-        word = [i[0] for i in word]
+        word = [i[0]+' '+str(i[1]) for i in word]
         return word
 
 class pmi():
@@ -192,7 +190,8 @@ class chi_square():
     def __init__():
         pass
     def chi_square(self, dataset, threshold):
-        dataset = self.cutWords(dataset)
+        stop_words_path = abspath+"//data//Stopword-Chinese.txt"
+        dataset = self.cutWords(dataset,stop_words_path)
         single,double= [],[]
         for i in xrange(len(dataset)):
             temp = dataset[i].split()
@@ -222,7 +221,7 @@ class chi_square():
             word.append((k,chi_square_temp,v[0]))
         word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:20]
         #print word
-        word = [i[0] for i in word]
+        word = [i[0]+' '+str(i[1]) for i in word]
         return word
 
 class lsi():
@@ -267,7 +266,7 @@ class DataAnalysis(pretreatment, Methods):
 if __name__=='__main__':
     data = DataAnalysis().read_txt(abspath+'//data//ruanjian.txt')
 #tfidf
-    word = DataAnalysis().tfidf(data,20)
+    #word = DataAnalysis().tfidf(data,200)
 #tf
     #word = DataAnalysis().tf(data,20)
 #df
@@ -277,12 +276,12 @@ if __name__=='__main__':
 #pmi
     #word = DataAnalysis().pmi(data,threshold=10)
 #chi_square
-    #word = DataAnalysis().chi_square(data,threshold=10)
+    word = DataAnalysis().chi_square(data,threshold=200)
     #print word
 #lsi/lsa
     #word = DataAnalysis().lsi(data)
     #with open("result.json", "w") as f:
         #json.dump(word, f)
     print word
-    #string = "\n".join(word)
-    #open("result.txt","w").write(string)
+    string = "\n".join(word)
+    open("result.txt","w").write(string)
