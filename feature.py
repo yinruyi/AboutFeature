@@ -32,13 +32,31 @@ class pretreatment():
             dataset.append(line)
         return dataset
 
-    def cutWords(self, dataset):
+    def cutWords(self, dataset, stop_words_path="None"):
         #分词
         result = []
-        for i in xrange(len(dataset)):
-            temp = " ".join(jieba.cut(dataset[i]))
-            result.append(temp)
-        return result
+        if stop_words_path == "None":
+            for i in xrange(len(dataset)):
+                temp = " ".join(jieba.cut(dataset[i]))
+                result.append(temp)
+            return result
+        else:
+            stop_words = self.read_txt(stop_words_path)
+            #print stop_words
+            for i in xrange(len(dataset)):
+                tup = []
+                temp = " ".join(jieba.cut(dataset[i]))
+                temp = temp.split()
+                #print temp
+                if len(temp) == 0:
+                    tup = ''
+                else:
+                    for j in temp:
+                        if j not in stop_words:
+                            tup.append(j)
+                tup = " ".join(tup)
+                result.append(tup)
+            return result
 
     def count(self, dataset):
         #计数
@@ -118,11 +136,10 @@ class tfidf():
     def __init__():
         pass
     def tfidf(self, dataset, num):
-        stop_words = self.read_txt("E:\\dev\\AboutFeature\\data\\Stopword-Chinese.txt")
-        print stop_words
-        corpus = self.cutWords(dataset)
-        for i in corpus:
-            
+        #stop_words = self.read_txt(abspath+"//data//Stopword-Chinese.txt")
+        #print stop_words
+        stop_words_path = abspath+"//data//Stopword-Chinese.txt"
+        corpus = self.cutWords(dataset,stop_words_path)
         vectorizer=CountVectorizer()#该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
         transformer=TfidfTransformer()#该类会统计每个词语的tf-idf权值
         #print vectorizer.fit_transform(corpus)
@@ -248,7 +265,7 @@ class DataAnalysis(pretreatment, Methods):
 
 
 if __name__=='__main__':
-    data = DataAnalysis().read_txt('E:\\dev\\AboutFeature\\data\\ruanjian.txt')
+    data = DataAnalysis().read_txt(abspath+'//data//ruanjian.txt')
 #tfidf
     word = DataAnalysis().tfidf(data,20)
 #tf
@@ -266,5 +283,6 @@ if __name__=='__main__':
     #word = DataAnalysis().lsi(data)
     #with open("result.json", "w") as f:
         #json.dump(word, f)
+    print word
     #string = "\n".join(word)
     #open("result.txt","w").write(string)
