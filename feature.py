@@ -219,9 +219,9 @@ class chi_square():
         for k,v in chi_temp.items():
             chi_square_temp = 1.0*(v[0]*v[3]-v[1]*v[2])**2/((v[0]+v[1])*(v[2]+v[3]))
             word.append((k,chi_square_temp,v[0]))
-        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:20]
-        #print word
-        word = [i[0]+' '+str(i[1]) for i in word]
+        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)
+        print word
+        word = [i[0] for i in word]
         return word
 
 class lsi():
@@ -276,7 +276,7 @@ if __name__=='__main__':
 #pmi
     #word = DataAnalysis().pmi(data,threshold=10)
 #chi_square
-    word = DataAnalysis().chi_square(data,threshold=200)
+    word = DataAnalysis().chi_square(data,threshold=10)
     #print word
 #lsi/lsa
     #word = DataAnalysis().lsi(data)
